@@ -7,16 +7,34 @@
     <link rel="stylesheet" href="register.css" />
   </head>
   <body>
-    <form>
+    <form action="/login" method="post" onsubmit="return handler()">
       <h1>Sign up here</h1>
       <div id="register">
-        <input type="email" placeholder="Enter email" />
-        <input type="password" placeholder="Enter password" />
+        <input type="email" name="email" placeholder="Enter email" id="e" />
+        <h3 id="message"></h3>
+        <input
+          type="password"
+          name="password"
+          placeholder="Enter password"
+          id="p"
+        />
       </div>
 
       <div id="button">
-        <button>Login</button>
+        <button type="submit">Login</button>
       </div>
     </form>
+    <script>
+      function handler() {
+        var email = document.getElementById("e").value;
+        var password = document.getElementById("p").value;
+        if (email == "" || password == "") {
+          alert("Incomplete credentials");
+          return false;
+        }
+
+        return true;
+      }
+    </script>
   </body>
 </html>
