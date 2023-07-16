@@ -3,6 +3,7 @@ const ejs = require("ejs");
 const app = express();
 const mongoose = require("mongoose");
 var bodyParser = require("body-parser");
+const jwt = require("jsonwebtoken");
 
 app.use(express.static(__dirname));
 app.use(express.urlencoded({ extended: true }));
@@ -94,13 +95,9 @@ app.post("/login", (req, res) => {
     .then((doc) => {
       if (!doc) {
         res.sendFile("/register.html", { root: __dirname });
-      } else {
-        if (doc.password === password) {
-          res.sendFile("./notes.html", { root: __dirname });
-        } else {
-          res.status(401).send("wrong password");
-        }
       }
+      const token = jwt.sign({ Email: email }, "digtalnotes");
+      res.sendFile("./notes.html", { root: __dirname });
     })
     .catch((e) => console.log(e));
 });

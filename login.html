@@ -25,15 +25,31 @@
       </div>
     </form>
     <script>
+      var userData;
+      fetch("/getUser")
+        .then((res) => res.json())
+        .then((data) => {
+          userData = data;
+        })
+        .catch((err) => console.log(err));
       function handler() {
         var email = document.getElementById("e").value;
         var password = document.getElementById("p").value;
+        var bol = true;
+        userData.forEach((element) => {
+          if (element.Email === email && element.password != password) {
+            alert("Wrong password");
+            bol = false;
+            return;
+          }
+        });
+
         if (email == "" || password == "") {
           alert("Incomplete credentials");
           return false;
         }
-
-        return true;
+        console.log(bol);
+        return bol;
       }
     </script>
   </body>
