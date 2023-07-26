@@ -1,78 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Register</title>
-    <link rel="stylesheet" href="register.css" />
-  </head>
-  <body>
-    <form action="/register" method="post" onsubmit="return handler()">
-      <h1>Sign up here</h1>
-      <div id="register">
-        <input type="text" name="name" placeholder="Enter your name" id="n" />
-        <h3 id="msg"></h3>
-        <input
-          id="e"
-          type="email"
-          name="email"
-          placeholder="Enter email"
-          autocomplete="off"
-        />
-        <input
-          id="p"
-          type="password"
-          name="password"
-          placeholder="Enter password"
-          autocomplete="off"
-        />
-        <h3 id="message"></h3>
-        <input
-          id="cp"
-          type="password"
-          name="cpassword"
-          placeholder="Confirm password"
-        />
-      </div>
 
-      <div id="button">
-        <button type="submit">Submit</button>
-      </div>
-    </form>
-    <script>
-      var userData;
-      fetch("/getUser")
-        .then((res) => res.json())
-        .then((data) => {
-          userData = data;
-        })
-        .catch((err) => console.log(err));
-      function handler() {
-        var email = document.getElementById("e").value;
-        var name = document.getElementById("n").value;
-        var password = document.getElementById("p").value;
-        var cpassword = document.getElementById("cp").value;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register</title>
+  <link rel="stylesheet" href="register.css" />
+</head>
 
-        console.log(userData);
+<body>
+  <form action="/login" method="post" onsubmit="return handler()">
+    <h1>Sign up here</h1>
+    <div id="register">
+      <input type="text" name="name" placeholder="Enter your name" id="n" />
+      <h3 id="msg"></h3>
+      <input id="e" type="email" name="email" placeholder="Enter email" autocomplete="off" />
+      <input id="p" type="password" name="password" placeholder="Enter password" autocomplete="off" />
+      <h3 id="message"></h3>
+      <input id="cp" type="password" name="cpassword" placeholder="Confirm password" />
+    </div>
 
-        userData.forEach((element) => {
-          if (element.Email === email) {
-            alert("User already exists");
-            return false;
-          }
-        });
+    <div id="button">
+      <button type="submit">Submit</button>
+    </div>
+  </form>
+  <script>
+    var userData;
+    fetch("/getUser")
+      .then((res) => res.json())
+      .then((data) => {
+        userData = data;
+      })
+      .catch((err) => console.log(err));
+    function handler() {
+      var email = document.getElementById("e").value;
+      var name = document.getElementById("n").value;
+      var password = document.getElementById("p").value;
+      var cpassword = document.getElementById("cp").value;
 
-        if (email == "" || name == "" || password == "" || cpassword == "") {
-          alert("Incomplete credentials");
-          return false;
+      var bool = true;
+      userData.forEach((element) => {
+        if (element.Email === email) {
+          alert("User already exists");
+          bool = false;
         }
+      });
 
-        if (password != cpassword) {
-          document.getElementById("message").innerText = "*password not match";
-          return false;
-        }
-        return true;
+      if (email == "" || name == "" || password == "" || cpassword == "") {
+        alert("Incomplete credentials");
+        return false;
       }
-    </script>
-  </body>
+
+      if (password != cpassword) {
+        document.getElementById("message").innerText = "*password does not match";
+        return false;
+      }
+      return bool;
+    }
+  </script>
+</body>
+
 </html>

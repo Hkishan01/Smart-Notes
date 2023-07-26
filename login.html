@@ -1,56 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Register</title>
-    <link rel="stylesheet" href="register.css" />
-  </head>
-  <body>
-    <form action="/login" method="post" onsubmit="return handler()">
-      <h1>Sign up here</h1>
-      <div id="register">
-        <input type="email" name="email" placeholder="Enter email" id="e" />
-        <h3 id="message"></h3>
-        <input
-          type="password"
-          name="password"
-          placeholder="Enter password"
-          id="p"
-        />
-      </div>
 
-      <div id="button">
-        <button type="submit">Login</button>
-      </div>
-    </form>
-    <script>
-      var userData;
-      fetch("/getUser")
-        .then((res) => res.json())
-        .then((data) => {
-          userData = data;
-        })
-        .catch((err) => console.log(err));
-      function handler() {
-        var email = document.getElementById("e").value;
-        var password = document.getElementById("p").value;
-        var bol = true;
-        userData.forEach((element) => {
-          if (element.Email === email && element.password != password) {
-            alert("Wrong password");
-            bol = false;
-            return;
-          }
-        });
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register</title>
+  <link rel="stylesheet" href="register.css" />
+</head>
 
-        if (email == "" || password == "") {
-          alert("Incomplete credentials");
-          return false;
-        }
-        console.log(bol);
-        return bol;
+<body>
+  <form method="dialog" onsubmit="handler()" autocomplete="off">
+    <h1>Login here</h1>
+    <div id="register">
+      <input type="email" name="email" placeholder="Enter email" id="e" />
+      <h3 id="message"></h3>
+      <input type="password" name="password" placeholder="Enter password" id="p" />
+    </div>
+
+    <div id="button">
+      <button type="submit">Login</button>
+    </div>
+  </form>
+  <script>
+    var userData;
+    fetch("/getUser")
+      .then((res) => res.json())
+      .then((data) => {
+        userData = data;
+      })
+      .catch((err) => console.log(err));
+    async function handler() {
+      var email = document.getElementById("e").value;
+      var password = document.getElementById("p").value;
+      if (email == "" || password == "") {
+        alert("Incomplete credentials");
+        return false;
       }
-    </script>
-  </body>
+      var bool = false;
+      var present = false;
+      let dbEmail;
+      let dbPassword;
+      userData.forEach((element) => {
+        if (element.Email === email) {
+          dbEmail = element.Email;
+          dbPassword = element.password;
+          present = true;
+          return;
+        }
+      })
+      if (present) {
+        const res = await fetch("/matchPassword",
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify({ hashed: dbPassword, original: password })
+          })
+        bool = await res.json()
+      }
+
+      if (present && !bool) {
+        alert("Wrong password");
+      } else if (present && bool) {
+        data = { Email: email }
+        let options = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+          },
+          body: JSON.stringify(data)
+        }
+        let response = await fetch("/getToken", options)
+        let token = await response.json();
+        localStorage.setItem("token", token);
+        window.location.href = "/notes"
+
+      } else if (!present) {
+        alert("User not Registered")
+        window.location.href = "/register"
+      }
+
+    }
+  </script>
+</body>
+
 </html>

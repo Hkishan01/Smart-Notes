@@ -4,23 +4,31 @@
   padding: 0;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 #navbar {
   color: white;
   font-size: 1.5rem;
   display: flex;
   justify-content: space-between;
-  padding: 2%;
-  background-color: #ffe569;
+  padding: 1.2%;
+  background-color: #a076f9;
 }
+
 #list {
   gap: 15px;
   display: flex;
   list-style: none;
 }
+
 #list a {
   text-decoration: none;
   color: black;
+  font-weight: bold;
 }
+
 #navbar button {
   font-size: 1.2rem;
   background-color: black;
@@ -33,13 +41,14 @@
   text-align: center;
   margin-top: 1%;
 }
+
 .form {
   height: fit-content;
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* border: 1px solid black; */
 }
+
 form button {
   display: block;
   margin: auto;
@@ -50,6 +59,7 @@ form button {
   padding: 5px;
   margin-top: 30px;
 }
+
 .input {
   margin-top: 30px;
   display: flex;
@@ -57,21 +67,28 @@ form button {
   align-items: center;
   gap: 5px;
   width: 40%;
-  /* border: 1px solid red; */
   font-weight: bold;
 }
+
 input {
   width: 60%;
   padding: 5px;
   border: 2px solid grey;
   border-radius: 5px;
 }
+
 .input label {
   font-size: 1.3rem;
 }
+
+.c p::-webkit-scrollbar {
+  display: none;
+}
+
 textarea::-webkit-scrollbar {
   display: none;
 }
+
 #content {
   width: 53%;
   height: 25vh;
@@ -84,22 +101,26 @@ textarea::-webkit-scrollbar {
 #second h1 {
   margin: 1% 0 1% 1%;
 }
+
 #card {
   display: flex;
   justify-content: space-evenly;
   flex-wrap: wrap;
 }
+
 #card h1 {
   width: 100%;
   text-align: center;
   font-size: 2rem;
 }
+
 #card p {
   width: 100%;
   height: 90%;
   font-size: 1.3rem;
   padding: 10px;
 }
+
 .c {
   display: flex;
   flex-direction: column;
@@ -110,26 +131,65 @@ textarea::-webkit-scrollbar {
   border-bottom: 8px solid #be6db7;
   margin-bottom: 2vh;
 }
+
 .btn {
   display: flex;
   justify-content: flex-end;
 
   gap: 10px;
 }
+
 .btn button {
   border: none;
   background-color: white;
 }
 
+.c p {
+  overflow: scroll;
+  overflow-x: hidden;
+}
+
 footer {
   margin-top: 8vh;
-  background-color: #ffe569;
+  background-color: #a076f9;
   height: 10vh;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
+
 footer p {
+  font-weight: bold;
   font-size: 1.3rem;
   text-align: center;
+}
+@media (max-width: 600px) {
+  #navbar {
+    font-size: 1.2rem;
+  }
+  #navbar button {
+    padding: 4px;
+    font-size: 1.1rem;
+  }
+  .input label {
+    font-size: 1.1rem;
+  }
+  .input {
+    width: 90%;
+  }
+  input {
+    width: 80%;
+  }
+  .c {
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 10px;
+  }
+  footer {
+    margin-bottom: 0px;
+  }
+  footer p {
+    font-size: 1.1rem;
+  }
 }

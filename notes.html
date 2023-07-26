@@ -21,19 +21,19 @@
   <body>
     <nav id="navbar">
       <ul id="list">
-        <a href="">
-          <li>Home</li>
+        <a href="#second">
+          <li>My Notes</li>
         </a>
-        <a href="">
+        <a href="#footer">
           <li>About us</li>
         </a>
       </ul>
-      <button>Log out</button>
+      <button onclick="logout()">Log out</button>
     </nav>
     <main>
       <section id="first">
         <h1>Create new note.</h1>
-        <form action="/notes" method="post">
+        <form method="dialog" onsubmit="handler()">
           <div class="form">
             <div class="input">
               <label for="title">Title :</label>
@@ -51,12 +51,12 @@
         <h1>Your Previous Notes ...</h1>
         <div id="card">
           <div class="c" id="c1">
-            <h1>Title</h1>
+            <h1>Sample Title</h1>
             <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos amet
-              rem placeat similique commodi unde? Recusandae perspiciatis libero
-              expedita tenetur est alias? Possimus autem porro itaque quisquam
-              ipsa nostrum inventore.
+              Sample Content - Lorem ipsum dolor sit amet consectetur
+              adipisicing elit. Quos amet rem placeat similique commodi unde?
+              Recusandae perspiciatis libero expedita tenetur est alias?
+              Possimus autem porro itaque quisquam ipsa nostrum inventore.
             </p>
             <div class="btn">
               <button>
@@ -70,43 +70,164 @@
         </div>
       </section>
     </main>
-    <footer>
+    <footer id="footer">
+      <p>Developed by Harikishan Yadav</p>
       <p>Copyright &copy; 2023 Digital Notes. All rights reserved</p>
     </footer>
     <script>
-      fetch("/getData")
-        .then((res) => res.json())
-        .then((data) => {
-          data.forEach((element) => {
-            const parentDiv = document.createElement("div");
-            parentDiv.classList.add("c");
-            const childPara = document.createElement("p");
-            childPara.textContent = element.content;
-            const childH1 = document.createElement("h1");
-            childH1.textContent = element.title;
-            parentDiv.appendChild(childH1);
-            parentDiv.appendChild(childPara);
-            document.getElementById("card").appendChild(parentDiv);
+      let token = localStorage.getItem("token");
+      if (!token) {
+        alert("You're not logged in.");
+        window.location.href = "/login";
+      }
 
-            const chilDiv = document.createElement("div");
-            chilDiv.classList.add("btn");
-            const btn1 = document.createElement("button");
-            const spn1 = document.createElement("span");
-            spn1.textContent = "delete";
-            spn1.classList.add("material-symbols-outlined");
-            const btn2 = document.createElement("button");
-            const spn2 = document.createElement("span");
-            spn2.textContent = "edit_note";
-            spn2.classList.add("material-symbols-outlined");
+      function handler() {
+        let title = document.getElementById("title").value;
+        let content = document.getElementById("content").value;
 
-            btn1.appendChild(spn1);
-            btn2.appendChild(spn2);
-            chilDiv.appendChild(btn1);
-            chilDiv.appendChild(btn2);
-            parentDiv.appendChild(chilDiv);
-          });
+        fetch("/userAuth", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json;charset=utf-8",
+          },
+          body: JSON.stringify({ token: token }),
         })
-        .catch((error) => console.log(error));
+          .then((res) => res.json())
+          .then((data) => {
+            fetch("/notes/v1", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json;charset=utf-8",
+              },
+              body: JSON.stringify({
+                title: title,
+                content: content,
+                email: data.data.Email,
+              }),
+            })
+              .then((res) => res.json())
+              .then((res) => {
+                if (res.done) {
+                  location.reload();
+                } else {
+                  alert("Something went wrong");
+                }
+              });
+          });
+      }
+
+      async function del(id, userEmail) {
+        await fetch("/deleteNotes", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json;charset=utf-8",
+          },
+          body: JSON.stringify({ Id: id, email: userEmail }),
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            if (res.done) {
+              location.reload();
+            } else {
+              alert("Ooops, Something went wrong !!!");
+            }
+          });
+      }
+
+      async function edit(id, userEmail, content) {
+        let newContent = prompt("Enter the new Content", content);
+        if (!newContent) {
+        } else {
+          await fetch("/editNotes", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json;charset=utf-8",
+            },
+            body: JSON.stringify({
+              Id: id,
+              email: userEmail,
+              Content: newContent,
+            }),
+          })
+            .then((res) => res.json())
+            .then((res) => {
+              if (res.done) {
+                location.reload();
+              } else {
+                alert("Ooops, Something went wrong !!!");
+              }
+            });
+        }
+      }
+
+      let userData;
+      fetch("/userAuth", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json;charset=utf-8",
+        },
+        body: JSON.stringify({ token: token }),
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          userData = data;
+          if (userData.Login == false) {
+            window.location.href = "/login";
+          }
+          fetch("/getData", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json;charset=utf-8",
+            },
+            body: JSON.stringify({ Email: userData.data.Email }),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              data.Notes.forEach((element) => {
+                const parentDiv = document.createElement("div");
+                parentDiv.classList.add("c");
+                const childPara = document.createElement("p");
+                childPara.textContent = element.Content;
+                const childH1 = document.createElement("h1");
+                childH1.textContent = element.Title;
+                parentDiv.appendChild(childH1);
+                parentDiv.appendChild(childPara);
+                document.getElementById("card").appendChild(parentDiv);
+
+                const chilDiv = document.createElement("div");
+                chilDiv.classList.add("btn");
+                const btn1 = document.createElement("button");
+                btn1.addEventListener("click", () =>
+                  del(element._id, data.User)
+                );
+                const spn1 = document.createElement("span");
+                spn1.textContent = "delete";
+                spn1.classList.add("material-symbols-outlined");
+                const btn2 = document.createElement("button");
+                btn2.addEventListener("click", () =>
+                  edit(element._id, data.User, element.Content)
+                );
+                const spn2 = document.createElement("span");
+                spn2.textContent = "edit_note";
+                spn2.classList.add("material-symbols-outlined");
+
+                btn1.appendChild(spn1);
+                btn2.appendChild(spn2);
+                chilDiv.appendChild(btn1);
+                chilDiv.appendChild(btn2);
+                parentDiv.appendChild(chilDiv);
+              });
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        });
+      function logout() {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      }
     </script>
   </body>
 </html>
