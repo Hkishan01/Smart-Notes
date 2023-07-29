@@ -36,7 +36,7 @@
       var bool = true;
      
       let res= await fetch("/getUser")
-      let userData= await res.json()
+       userData= await res.json()
      
       userData.forEach((element) => {
         if (element.Email === email) {
