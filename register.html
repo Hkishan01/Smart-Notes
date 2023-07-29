@@ -26,19 +26,17 @@
   </form>
   <script>
     var userData;
-    fetch("/getUser")
-      .then((res) => res.json())
-      .then((data) => {
-        userData = data;
-      })
-      .catch((err) => console.log(err));
-    function handler() {
+    
+   async function handler() {
       var email = document.getElementById("e").value;
       var name = document.getElementById("n").value;
       var password = document.getElementById("p").value;
       var cpassword = document.getElementById("cp").value;
 
       var bool = true;
+      let res= await fetch("/getUser")
+      let userData= await res.json()
+     
       userData.forEach((element) => {
         if (element.Email === email) {
           alert("User already exists");
