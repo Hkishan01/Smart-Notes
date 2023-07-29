@@ -25,7 +25,6 @@
     </div>
   </form>
   <script>
-    var userData;
     
    async function handler() {
       var email = document.getElementById("e").value;
@@ -36,7 +35,7 @@
       var bool = true;
      
       let res= await fetch("/getUser")
-       userData= await res.json()
+      let userData= await res.json()
      
       userData.forEach((element) => {
         if (element.Email === email) {
